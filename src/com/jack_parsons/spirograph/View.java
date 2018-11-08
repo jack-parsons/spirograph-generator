@@ -18,6 +18,11 @@ import java.awt.event.MouseEvent;
 
 public class View extends JFrame {
 
+	private static View frame;
+	
+	final int INITIALRADIUSRATIO = 800;
+	final int INITIALPENOFFSET = 800;
+	
 	private JPanel contentPane;
 	private JToolBar toolBar;
 	private JLabel radiusRatio;
@@ -25,8 +30,8 @@ public class View extends JFrame {
 	private Spirograph spirograph;
 	private JLabel penOffsetLabel;
 	private JSlider penOffsetSlider;
-	
-	private static View frame;
+	private JLabel loopsLabel;
+	private JSlider loopsSlider;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -45,12 +50,16 @@ public class View extends JFrame {
 	 * Create the frame.
 	 */
 	public View() {
+		// Set up the frame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 500);
+		setBounds(100, 100, 600, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		
+		// Create spirograph object
+		spirograph = new Spirograph((float)INITIALRADIUSRATIO/1000, (float)INITIALPENOFFSET/1000);
 		
 		toolBar = new JToolBar();
 		contentPane.add(toolBar, BorderLayout.NORTH);
@@ -58,41 +67,59 @@ public class View extends JFrame {
 		radiusRatio = new JLabel("Radius Ratio");
 		toolBar.add(radiusRatio);
 		
+		// Create radius ration slider
 		radiusRatioSlider = new JSlider();
+		radiusRatioSlider.setPaintTicks(true);
+		radiusRatioSlider.setMajorTickSpacing(50);
 		radiusRatioSlider.setMaximum(1000);
-		radiusRatioSlider.setValue(800);
-		radiusRatioSlider.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				spirograph.setRadiusRatio((float)radiusRatioSlider.getValue()/1000);
-				frame.repaint();
-			}
+		radiusRatioSlider.setValue(INITIALRADIUSRATIO);
+		radiusRatioSlider.addChangeListener(e -> {
+			spirograph.setRadiusRatio((float)radiusRatioSlider.getValue()/1000);
+			frame.repaint();
 		});
 		toolBar.add(radiusRatioSlider);
 		
 		penOffsetLabel = new JLabel("Pen Offset");
 		toolBar.add(penOffsetLabel);
 		
+		// Set up the pen offset slider
 		penOffsetSlider = new JSlider();
-		penOffsetSlider.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				spirograph.setPenOffset((float)penOffsetSlider.getValue()/1000);
-				frame.repaint();
-			}
-		});
+		penOffsetSlider.setPaintTicks(true);
+		penOffsetSlider.setMajorTickSpacing(50);
 		penOffsetSlider.setMaximum(1000);
-		penOffsetSlider.setValue(800);
+		penOffsetSlider.setValue(INITIALPENOFFSET);
+		penOffsetSlider.addChangeListener(e -> {
+			spirograph.setPenOffset((float)penOffsetSlider.getValue()/1000);
+			frame.repaint();
+		});
 		toolBar.add(penOffsetSlider);
-		spirograph = new Spirograph((float)radiusRatioSlider.getValue()/1000, (float)penOffsetSlider.getValue()/1000);
+		
+		loopsLabel = new JLabel("Loops");
+		toolBar.add(loopsLabel);
+		
+		loopsSlider = new JSlider();
+		loopsSlider.setMajorTickSpacing(10);
+		loopsSlider.setMinimum(5);
+		loopsSlider.setSnapToTicks(true);
+		loopsSlider.setMinorTickSpacing(5);
+		loopsSlider.setPaintLabels(true);
+		loopsSlider.setPaintTicks(true);
+		loopsSlider.addChangeListener(e -> {
+			spirograph.setNumLoops(loopsSlider.getValue());
+			frame.repaint();
+		});
+		toolBar.add(loopsSlider);
 	}
 	
 	@Override
+	/**
+	 * 
+	 */
 	public void paint(Graphics canvas) {
         Graphics2D canvas2D = (Graphics2D) canvas;
         spirograph.update(frame.getWidth(), frame.getHeight()-80);
         super.paint(canvas);
-        spirograph.paint(canvas2D);
+        spirograph.paint(canvas2D, 0);
 	}
 
 }
