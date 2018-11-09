@@ -98,12 +98,13 @@ public class View extends JFrame {
 		toolBar.add(loopsLabel);
 		
 		loopsSlider = new JSlider();
+		loopsSlider.setMaximum(1000);
 		loopsSlider.setMajorTickSpacing(10);
-		loopsSlider.setMinimum(5);
+		loopsSlider.setMinimum(1);
 		loopsSlider.setSnapToTicks(true);
 		loopsSlider.setMinorTickSpacing(5);
-		loopsSlider.setPaintLabels(true);
-		loopsSlider.setPaintTicks(true);
+		//loopsSlider.setPaintLabels(true);
+		//loopsSlider.setPaintTicks(true);
 		loopsSlider.addChangeListener(e -> {
 			spirograph.setNumLoops(loopsSlider.getValue());
 			frame.repaint();
